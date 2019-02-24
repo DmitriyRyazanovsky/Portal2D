@@ -9,7 +9,9 @@ class Field():
         self.wall_image = Helper.load_image('wall.png')
         self.exit_image = Helper.load_image('exit.png')
         self.enter_image = Helper.load_image('enter.png')
-        self.sprites = pygame.sprite.Group()
+        self.walls = pygame.sprite.Group()
+        self.exits = pygame.sprite.Group()
+        self.enters = pygame.sprite.Group()
 
     def load(self, level):
         self.level = level
@@ -24,16 +26,18 @@ class Field():
             for j in range(len(self.lines[i])):
                 x, y = 63 * j, 83 * i
                 if self.lines[i][j] == 'X':
-                    sprite = Block(self.wall_image, x, y)
-                    self.sprites.add(sprite)
+                    wall = Block(self.wall_image, x, y)
+                    self.walls.add(wall)
                 elif self.lines[i][j] == 'E':
-                    sprite = Block(self.exit_image, x, y)
-                    self.sprites.add(sprite)
+                    exit = Block(self.exit_image, x, y)
+                    self.exits.add(exit)
                 elif self.lines[i][j] == '0':
-                    sprite = Block(self.enter_image, x, y)
+                    enter = Block(self.enter_image, x, y)
                     self.start_x = x
                     self.start_y = y
-                    self.sprites.add(sprite)
+                    self.enters.add(enter)
 
     def draw(self, screen):
-        self.sprites.draw(screen)
+        self.walls.draw(screen)
+        self.exits.draw(screen)
+        self.enters.draw(screen)
