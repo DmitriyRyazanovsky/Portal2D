@@ -1,0 +1,10 @@
+XXXXXXXXXXXXXXXXXXX
+X 0               V
+XXXXXXXX      X   X
+X      XX     X   X
+X       XVV XXX   X
+X       XXX XXXX  X
+V                 X
+X E          X    X
+XXXXX        V    X
+X            XXXX X
