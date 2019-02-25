@@ -4,10 +4,13 @@ import Helper
 
 
 class Label(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, w, h):
         super().__init__()
         self.image = Helper.load_image('label.png')
         self.rect = self.image.get_rect()
+        self.rect.x = int(w // 2 - self.rect.w // 2)
+        self.rect.y = int(h // 2 - self.rect.h // 2)
+
         self.group = pygame.sprite.Group()
         self.group.add(self)
 
@@ -26,7 +29,7 @@ class Label(pygame.sprite.Sprite):
         y = self.rect.y + 300
         screen.blit(text, (x, y))
 
-        text = self.font2.render("нажмите пробел для продолжения", True, self.color)
+        text = self.font2.render("щелкните мышкой или нажмите пробел для продолжения", True, self.color)
         x = self.rect.x + self.rect.w // 2 - text.get_width() // 2
         y = self.rect.y + 350
         screen.blit(text, (x, y))

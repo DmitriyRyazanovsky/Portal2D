@@ -24,7 +24,7 @@ class Portal(pygame.sprite.Sprite):
         self.image = self.horz_image
         self.rect = self.horz_image.get_rect()
         self.rect.x = rect.x
-        self.rect.y = rect.y - 2
+        self.rect.y = rect.y - self.rect.h // 2
         self.visible = True
         self.orientation = Portal.TOP
 
@@ -32,14 +32,14 @@ class Portal(pygame.sprite.Sprite):
         self.image = self.horz_image
         self.rect = self.horz_image.get_rect()
         self.rect.x = rect.x
-        self.rect.y = rect.y + rect.h - 2
+        self.rect.y = rect.y + rect.h - self.rect.h // 2
         self.visible = True
         self.orientation = Portal.BOTTOM
 
     def left(self, rect):
         self.image = self.vert_image
         self.rect = self.vert_image.get_rect()
-        self.rect.x = rect.x - 2
+        self.rect.x = rect.x - self.rect.w // 2
         self.rect.y = rect.y
         self.visible = True
         self.orientation = Portal.LEFT
@@ -47,7 +47,7 @@ class Portal(pygame.sprite.Sprite):
     def right(self, rect):
         self.image = self.vert_image
         self.rect = self.vert_image.get_rect()
-        self.rect.x = rect.x + rect.w - 2
+        self.rect.x = rect.x + rect.w - self.rect.w // 2
         self.rect.y = rect.y
         self.visible = True
         self.orientation = Portal.RIGHT

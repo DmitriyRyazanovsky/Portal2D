@@ -18,6 +18,7 @@ class Field():
         self.enters = pygame.sprite.Group()
 
     def load(self, level):
+        self.level = level
         self.lines = []
 
         self.blocks.remove(self.blocks)
@@ -49,6 +50,7 @@ class Field():
                     self.start_x = x
                     self.start_y = y
                     self.enters.add(enter)
+
 
     def draw(self, screen):
         self.blocks.draw(screen)

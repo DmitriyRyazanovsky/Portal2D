@@ -5,6 +5,7 @@ from Field import Field
 import pygame, os
 
 from Label import Label
+from Menu import Menu
 from Portal import Portal
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -13,7 +14,6 @@ pygame.init()
 pygame.display.set_caption('Portal 2D')
 pygame.font.init()
 
-a = 2
 w = 63 * 19
 h = 83 * 10
 size = w, h
@@ -23,28 +23,20 @@ fps = 60
 
 running = True
 shift = False
+a = 2
 
 human = Human()
 bullet = Bullet()
-
-level = 1
 field = Field()
-field.load(level)
-
-human.rect.x = field.start_x
-human.rect.y = field.start_y
 
 red_portal = Portal('red_vert.png', 'red_horz.png')
 blue_portal = Portal('blue_vert.png', 'blue_horz.png')
 
-label = Label()
-label.text = "Уровень " + str(level)
-label.visible = True
-label.rect.x = int(w // 2 - label.rect.w // 2)
-label.rect.y = int(h // 2 - label.rect.h // 2)
+label = Label(w, h)
+menu = Menu(w, h)
 
 
-def reload():
+def load_level(level):
     field.load(level)
     human.rect.x = field.start_x
     human.rect.y = field.start_y
@@ -52,11 +44,25 @@ def reload():
     blue_portal.visible = False
     bullet.visible = False
     label.visible = True
+    label.text = "Уровень " + str(level)
+    menu.visible = False
+    menu.start = False
     bullet.red = True
 
 
-while running:
+def click_menu():
+    if menu.button == Menu.NEW_GAME:
+        load_level(1)
+    elif menu.button == Menu.EXIT:
+        global running
+        running = False
+    elif menu.button == Menu.CONTINUE:
+        menu.visible = False
+    elif menu.button == Menu.RESTART:
+        load_level(field.level)
 
+
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -67,6 +73,8 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if label.visible:
                 label.visible = False
+            elif menu.visible:
+                click_menu()
             elif not bullet.visible:
                 x1 = human.rect.x + human.rect.w / 2
                 y1 = human.rect.y + human.rect.h / 2
@@ -75,24 +83,41 @@ while running:
                 bullet.start(x1, y1, x2, y2)
         if label.visible and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             label.visible = False
+        if not menu.visible and not label.visible and event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            menu.visible = True
+        if menu.visible and event.type == pygame.MOUSEMOTION:
+            menu.set_mouse(event.pos[0], event.pos[1])
+
+    if label.visible:
+        screen.fill(pygame.Color('black'))
+        label.draw(screen)
+        pygame.display.flip()
+        clock.tick(fps)
+        continue
+
+    if menu.visible:
+        screen.fill(pygame.Color('black'))
+        menu.draw(screen)
+        pygame.display.flip()
+        clock.tick(fps)
+        continue
 
     x = human.rect.x
 
-    if not label.visible:
-        keys = pygame.key.get_pressed()
+    keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-            if shift:
-                human.run_right()
-            else:
-                human.go_right()
-        elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
-            if shift:
-                human.run_left()
-            else:
-                human.go_left()
+    if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+        if shift:
+            human.run_right()
         else:
-            human.stop()
+            human.go_right()
+    elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
+        if shift:
+            human.run_left()
+        else:
+            human.go_left()
+    else:
+        human.stop()
 
     if Helper.mask_collide_sprites(human, field.blocks):
         human.rect.x = x
@@ -156,30 +181,27 @@ while running:
             blue_portal.teleport(human)
 
     if field.exit.rect.contains(human.rect):
-        if level == 4:
-            level = 1
+        if field.level == 4:
+            load_level(1)
             label.text = "Поздравляю! Игра пройдена!"
+            menu.visible = True
+            menu.start = True
         else:
-            level += 1
-            label.text = "Уровень " + str(level)
-        reload()
+            load_level(field.level + 1)
+        label.visible = True
 
     if human.rect.y > h:
-        reload()
+        load_level(field.level)
 
-    if label.visible:
-        screen.fill(pygame.Color('black'))
-        label.draw(screen)
-    else:
-        screen.fill(pygame.Color('white'))
-        field.draw(screen)
-        human.draw(screen)
-        if red_portal.visible:
-            red_portal.draw(screen)
-        if blue_portal.visible:
-            blue_portal.draw(screen)
-        if bullet.visible:
-            bullet.draw(screen)
+    screen.fill(pygame.Color('white'))
+    field.draw(screen)
+    human.draw(screen)
+    if red_portal.visible:
+        red_portal.draw(screen)
+    if blue_portal.visible:
+        blue_portal.draw(screen)
+    if bullet.visible:
+        bullet.draw(screen)
 
     pygame.display.flip()
     clock.tick(fps)
