@@ -7,18 +7,24 @@ import Helper
 class Field():
     def __init__(self):
         self.wall_image = Helper.load_image('wall.png')
+        self.block_image = Helper.load_image('block.png')
         self.exit_image = Helper.load_image('exit.png')
         self.enter_image = Helper.load_image('enter.png')
-        self.walls = pygame.sprite.Group()
+
+        self.block_mask = pygame.mask.from_surface(self.block_image)
+
+        self.blocks = pygame.sprite.Group()
         self.exits = pygame.sprite.Group()
         self.enters = pygame.sprite.Group()
 
     def load(self, level):
-        self.level = level
-        # self.sprites.clear()
-
         self.lines = []
-        with open('data/Level' + str(self.level) + '.txt') as f:
+
+        self.blocks.remove(self.blocks)
+        self.exits.remove(self.exits)
+        self.enters.remove(self.enters)
+
+        with open('data/Level' + str(level) + '.txt') as f:
             for line in f.readlines():
                 self.lines.append(line.strip())
 
@@ -26,11 +32,18 @@ class Field():
             for j in range(len(self.lines[i])):
                 x, y = 63 * j, 83 * i
                 if self.lines[i][j] == 'X':
-                    wall = Block(self.wall_image, x, y)
-                    self.walls.add(wall)
+                    block = Block(self.block_image, x, y)
+                    block.mask = self.block_mask
+                    block.portal = False
+                    self.blocks.add(block)
+                elif self.lines[i][j] == 'V':
+                    block = Block(self.wall_image, x, y)
+                    block.mask = self.block_mask
+                    block.portal = True
+                    self.blocks.add(block)
                 elif self.lines[i][j] == 'E':
-                    exit = Block(self.exit_image, x, y)
-                    self.exits.add(exit)
+                    self.exit = Block(self.exit_image, x, y)
+                    self.exits.add(self.exit)
                 elif self.lines[i][j] == '0':
                     enter = Block(self.enter_image, x, y)
                     self.start_x = x
@@ -38,6 +51,6 @@ class Field():
                     self.enters.add(enter)
 
     def draw(self, screen):
-        self.walls.draw(screen)
+        self.blocks.draw(screen)
         self.exits.draw(screen)
         self.enters.draw(screen)

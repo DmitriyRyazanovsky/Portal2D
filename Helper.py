@@ -21,3 +21,10 @@ def get_frames(image, columns):
         frame = image.subsurface(pygame.Rect(w * i, 0, w, h))
         frames.append(frame)
     return frames
+
+
+def mask_collide_sprites(mask, sprites):
+    for sprite in sprites:
+        if pygame.sprite.collide_mask(mask, sprite):
+            return True
+    return False

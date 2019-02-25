@@ -3,7 +3,7 @@ import pygame
 
 
 class Human(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self):
         super().__init__()
 
         walk_image = Helper.load_image('walk.png')
@@ -22,10 +22,15 @@ class Human(pygame.sprite.Sprite):
 
         self.cur_frame = 0
         self.image = self.walk_frames_right[0]
+        self.mask = pygame.mask.from_surface(self.image)
+
         self.last_time = 0
         self.right = True
 
-        self.rect = pygame.Rect(x, y, self.image.get_width(), self.image.get_height())
+        self.rect = self.image.get_rect()
+
+        self.group = pygame.sprite.Group()
+        self.group.add(self)
 
     def go_right(self):
         self.right = True
@@ -77,3 +82,13 @@ class Human(pygame.sprite.Sprite):
             self.image = self.walk_frames_right[self.cur_frame]
         else:
             self.image = self.walk_frames_left[self.cur_frame]
+
+    def fly(self):
+        self.cur_frame = 4
+        if self.right:
+            self.image = self.walk_frames_right[self.cur_frame]
+        else:
+            self.image = self.walk_frames_left[self.cur_frame]
+
+    def draw(self, screen):
+        self.group.draw(screen)
