@@ -2,6 +2,7 @@ import os
 import pygame
 
 
+# загрузка картинки из файла
 def load_image(name):
     fullname = os.path.join('data', name)
     try:
@@ -13,6 +14,7 @@ def load_image(name):
         raise SystemExit(message)
 
 
+# получение фрэймов из спрайта
 def get_frames(image, columns):
     w = image.get_width() // columns
     h = image.get_height()
@@ -23,6 +25,7 @@ def get_frames(image, columns):
     return frames
 
 
+# проверка, что маска спрайта пересеклась с группой спрайтов
 def mask_collide_sprites(mask, sprites):
     for sprite in sprites:
         if pygame.sprite.collide_mask(mask, sprite):
