@@ -32,6 +32,8 @@ class Human(pygame.sprite.Sprite):
         self.group = pygame.sprite.Group()
         self.group.add(self)
 
+        self.acceleration = 2
+
     def go_right(self):
         self.right = True
         self.rect.x += 2

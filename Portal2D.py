@@ -14,8 +14,8 @@ pygame.init()
 pygame.display.set_caption('Portal 2D')
 pygame.font.init()
 
-w = 63 * 19
-h = 83 * 10
+w = 64 * 19
+h = 84 * 10
 size = w, h
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
@@ -23,7 +23,6 @@ fps = 60
 
 running = True
 shift = False
-a = 2
 
 human = Human()
 bullet = Bullet()
@@ -38,8 +37,8 @@ menu = Menu(w, h)
 
 def load_level(level):
     field.load(level)
-    human.rect.x = field.start_x
-    human.rect.y = field.start_y
+    human.rect.x = field.enter.rect.x
+    human.rect.y = field.enter.rect.y
     red_portal.visible = False
     blue_portal.visible = False
     bullet.visible = False
@@ -48,6 +47,49 @@ def load_level(level):
     menu.visible = False
     menu.start = False
     bullet.red = True
+    pygame.display.set_caption('Portal 2D - уровень ' + str(level))
+
+
+def save_game():
+    user = os.environ.get("USERNAME")
+    file = 'saves/' + user + ".save"
+
+    with open(file, "wt") as f:
+        f.write(str(field.level) + "\n")
+        f.write(str(human.rect.x) + "\n")
+        f.write(str(human.rect.y) + "\n")
+        f.write(str(bullet.red) + "\n")
+
+        red_portal.save(f)
+        blue_portal.save(f)
+
+    menu.visible = False
+
+
+def load_game():
+    user = os.environ.get("USERNAME")
+    file = 'saves/' + user + ".save"
+
+    try:
+        with open(file, "rt") as f:
+            lines = f.readlines()
+    except Exception:
+        return
+
+    lines = [s.strip() for s in lines]
+
+    level = int(lines[0])
+    load_level(level)
+
+    human.rect.x = int(lines[1])
+    human.rect.y = int(lines[2])
+    bullet.red = lines[3] == "True"
+
+    red_portal.load(lines, 4)
+    if red_portal.visible:
+        blue_portal.load(lines, 8)
+    else:
+        blue_portal.load(lines, 5)
 
 
 def click_menu():
@@ -60,6 +102,70 @@ def click_menu():
         menu.visible = False
     elif menu.button == Menu.RESTART:
         load_level(field.level)
+    elif menu.button == Menu.SAVE:
+        save_game()
+    elif menu.button == Menu.LOAD:
+        load_game()
+
+
+def open_portal(block):
+    cx = bullet.rect.x + bullet.rect.w / 2
+    cy = bullet.rect.y + bullet.rect.h / 2
+
+    if bullet.red:
+        portal = red_portal
+    else:
+        portal = blue_portal
+
+    if block.rect.x <= cx <= block.rect.x + block.rect.w:
+        if cy < block.rect.y:
+            portal.top(block.rect)
+        else:
+            portal.bottom(block.rect)
+    elif block.rect.y <= cy <= block.rect.y + block.rect.h:
+        if cx < block.rect.x:
+            portal.left(block.rect)
+        else:
+            portal.right(block.rect)
+    else:
+        return
+
+    if bullet.red:
+        bullet.red = False
+    else:
+        bullet.red = True
+
+
+def move_bullet():
+    for i in range(15):
+        bullet.move()
+
+        if red_portal.visible and pygame.sprite.spritecollideany(bullet, red_portal.group):
+            bullet.visible = False
+            break
+
+        if blue_portal.visible and pygame.sprite.spritecollideany(bullet, blue_portal.group):
+            bullet.visible = False
+            break
+
+        block = pygame.sprite.spritecollideany(bullet, field.blocks)
+        if block:
+            bullet.visible = False
+            if block.portal:
+                open_portal(block)
+            break
+
+
+def try_down():
+    for i in range(int(human.acceleration)):
+        human.rect.y += 1
+        if Helper.mask_collide_sprites(human, field.blocks):
+            human.rect.y -= 1
+            human.acceleration = 2
+            break
+        else:
+            human.acceleration += 0.05
+            human.fly()
 
 
 while running:
@@ -122,59 +228,10 @@ while running:
     if Helper.mask_collide_sprites(human, field.blocks):
         human.rect.x = x
 
-    for i in range(int(a)):
-        human.rect.y += 1
-        if Helper.mask_collide_sprites(human, field.blocks):
-            human.rect.y -= 1
-            a = 2
-            break
-        else:
-            a += 0.05
-            human.fly()
+    try_down()
 
     if bullet.visible:
-        for i in range(15):
-            bullet.move()
-
-            if red_portal.visible and pygame.sprite.spritecollideany(bullet, red_portal.group):
-                bullet.visible = False
-                break
-
-            if blue_portal.visible and pygame.sprite.spritecollideany(bullet, blue_portal.group):
-                bullet.visible = False
-                break
-
-            block = pygame.sprite.spritecollideany(bullet, field.blocks)
-            if block:
-                bullet.visible = False
-
-                if block.portal:
-                    cx = bullet.rect.x + bullet.rect.w / 2
-                    cy = bullet.rect.y + bullet.rect.h / 2
-
-                    if bullet.red:
-                        portal = red_portal
-                    else:
-                        portal = blue_portal
-
-                    if block.rect.x <= cx <= block.rect.x + block.rect.w:
-                        if cy < block.rect.y:
-                            portal.top(block.rect)
-                        else:
-                            portal.bottom(block.rect)
-                    elif block.rect.y <= cy <= block.rect.y + block.rect.h:
-                        if cx < block.rect.x:
-                            portal.left(block.rect)
-                        else:
-                            portal.right(block.rect)
-                    else:
-                        break
-
-                    if bullet.red:
-                        bullet.red = False
-                    else:
-                        bullet.red = True
-                break
+        move_bullet()
 
     if red_portal.visible and blue_portal.visible:
         if Helper.mask_collide_sprites(human, red_portal.group):
@@ -206,4 +263,5 @@ while running:
     pygame.display.flip()
     clock.tick(fps)
 
+save_game()
 pygame.quit()

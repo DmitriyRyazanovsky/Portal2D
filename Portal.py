@@ -68,3 +68,24 @@ class Portal(pygame.sprite.Sprite):
 
     def draw(self, screen):
         self.group.draw(screen)
+
+    def save(self, f):
+        f.write(str(self.visible) + "\n")
+        if self.visible:
+            f.write(str(self.orientation) + "\n")
+            f.write(str(self.rect.x) + "\n")
+            f.write(str(self.rect.y) + "\n")
+
+    def load(self, lines, i):
+        self.visible = lines[i] == "True"
+        if self.visible:
+            self.orientation = int(lines[i + 1])
+
+            if self.orientation == Portal.LEFT or self.orientation == Portal.RIGHT:
+                self.image = self.vert_image
+            else:
+                self.image = self.horz_image
+
+            self.rect = self.image.get_rect()
+            self.rect.x = int(lines[i + 2])
+            self.rect.y = int(lines[i + 3])
