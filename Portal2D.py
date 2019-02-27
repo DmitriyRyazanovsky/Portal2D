@@ -48,6 +48,7 @@ label = Label(w, h)
 # создаем меню
 menu = Menu(w, h)
 
+# подгружаем звук завершения уровня
 win_sound = pygame.mixer.Sound('data/tada.wav')
 
 # загрузка уровня
