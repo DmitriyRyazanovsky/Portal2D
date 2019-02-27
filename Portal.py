@@ -24,6 +24,9 @@ class Portal(pygame.sprite.Sprite):
         self.group = pygame.sprite.Group()
         self.group.add(self)
 
+        # звук телепорта
+        self.sound = pygame.mixer.Sound('data/portal.wav')
+
     # открываем портал сверху
     def top(self, rect):
         self.image = self.horz_image
@@ -74,6 +77,7 @@ class Portal(pygame.sprite.Sprite):
         elif self.orientation == Portal.RIGHT:
             human.rect.x = self.rect.x + self.rect.w
             human.rect.y = self.rect.y
+        self.sound.play()
 
     # рисуем портал на экране
     def draw(self, screen):

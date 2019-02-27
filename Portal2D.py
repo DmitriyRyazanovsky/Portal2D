@@ -48,6 +48,7 @@ label = Label(w, h)
 # создаем меню
 menu = Menu(w, h)
 
+win_sound = pygame.mixer.Sound('data/tada.wav')
 
 # загрузка уровня
 def load_level(level):
@@ -319,6 +320,7 @@ while running:
         else:
             load_level(field.level + 1)
         label.visible = True
+        win_sound.play()
 
     # если упал, то начинаем уровень заново
     if human.rect.y > h:

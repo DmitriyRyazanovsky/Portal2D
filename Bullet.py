@@ -19,6 +19,9 @@ class Bullet(pygame.sprite.Sprite):
         self.group = pygame.sprite.Group()
         self.group.add(self)
 
+        # звук выстрела
+        self.sound = pygame.mixer.Sound('data/purr.wav')
+
     # запуск пули
     def start(self, x1, y1, x2, y2):
         if self.red:
@@ -32,6 +35,7 @@ class Bullet(pygame.sprite.Sprite):
         self.x = x1
         self.y = y1
         self.visible = True
+        self.sound.play()
 
     # перемещение пули на 1 пиксель
     def move(self):
