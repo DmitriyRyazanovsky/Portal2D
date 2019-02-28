@@ -51,6 +51,7 @@ menu = Menu(w, h)
 # подгружаем звук завершения уровня
 win_sound = pygame.mixer.Sound('data/tada.wav')
 
+
 # загрузка уровня
 def load_level(level):
     # загружаем поле
@@ -163,14 +164,19 @@ def open_portal(block):
     # вычисляем с какой стороны портал
     if block.rect.x <= cx <= block.rect.x + block.rect.w:
         if cy < block.rect.y:
-            portal.top(block.rect)
+            if block.up == 1:
+                portal.top(block.rect)
+
         else:
-            portal.bottom(block.rect)
+            if block.down == 1:
+                portal.bottom(block.rect)
     elif block.rect.y <= cy <= block.rect.y + block.rect.h:
         if cx < block.rect.x:
-            portal.left(block.rect)
+            if block.left == 1:
+                portal.left(block.rect)
         else:
-            portal.right(block.rect)
+            if block.right == 1:
+                portal.right(block.rect)
     else:
         return
 
@@ -200,8 +206,7 @@ def move_bullet():
         block = pygame.sprite.spritecollideany(bullet, field.blocks)
         if block:
             bullet.visible = False
-            if block.portal:
-                open_portal(block)
+            open_portal(block)
             break
 
 

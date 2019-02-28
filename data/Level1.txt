@@ -1,10 +1,10 @@
-XVVVVVVVVVVVVVVVVVX
-X                 X
-X               E X
-V           XXXXXXX
-V  0              X
-XXXXX             X
-X                 X
-X                 X
-V                 V
-X                 X
+ABBBBBBBBBBBBBBBBBD
+R                 R
+R               1 R
+I           EQQQQQH
+I  0              R
+IQQQL             R
+R                 R
+R                 R
+I                 H
+N                 N
