@@ -1,5 +1,6 @@
 import os
 import pygame
+import math
 
 
 # загрузка картинки из файла

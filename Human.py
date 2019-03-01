@@ -1,8 +1,9 @@
 import Helper
 import pygame
 
+from Hand import Hand
 
-# класс - человечек
+
 class Human(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -35,13 +36,33 @@ class Human(pygame.sprite.Sprite):
         self.group = pygame.sprite.Group()
         self.group.add(self)
 
+        self.hand = Hand()
+        self.group.add(self.hand)
+
         # ускорение падения
         self.acceleration = 2
+
+        self.mouse_x = 0
+        self.mouse_y = 0
+
+    # переместить человека в координаты x,y
+    def set_pos(self, x, y):
+        self.rect.x = x
+        self.rect.y = y
+        self.hand.set_pos(x, y, self.mouse_x, self.mouse_y)
+
+    # сместить человека на dx,dy
+    def move(self, dx, dy):
+        self.set_pos(self.rect.x + dx, self.rect.y + dy)
+
+    def set_mouse(self, x, y):
+        self.mouse_x = x
+        self.mouse_y = y
 
     # перемещение вправо
     def go_right(self):
         self.right = True
-        self.rect.x += 2
+        self.move(2, 0)
 
         # меняем кадр через 45 мс
         if pygame.time.get_ticks() > self.last_time + 45:
@@ -54,7 +75,7 @@ class Human(pygame.sprite.Sprite):
     # перемещение влево
     def go_left(self):
         self.right = False
-        self.rect.x -= 2
+        self.move(-2, 0)
 
         if pygame.time.get_ticks() > self.last_time + 45:
             self.cur_frame += 1
@@ -66,7 +87,7 @@ class Human(pygame.sprite.Sprite):
     # бег вправо
     def run_right(self):
         self.right = True
-        self.rect.x += 4
+        self.move(4, 0)
 
         if pygame.time.get_ticks() > self.last_time + 45:
             self.cur_frame += 1
@@ -78,7 +99,7 @@ class Human(pygame.sprite.Sprite):
     # бег влево
     def run_left(self):
         self.right = False
-        self.rect.x -= 4
+        self.move(-4, 0)
 
         if pygame.time.get_ticks() > self.last_time + 45:
             self.cur_frame += 1

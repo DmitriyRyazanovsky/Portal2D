@@ -28,12 +28,12 @@ class Bullet(pygame.sprite.Sprite):
             self.image = self.red_image
         else:
             self.image = self.blue_image
-        self.x1 = x1
-        self.y1 = y1
+        self.x1 = x1 - self.image.get_width() // 2
+        self.y1 = y1 - self.image.get_height() // 2
         self.x2 = x2
         self.y2 = y2
-        self.x = x1
-        self.y = y1
+        self.x = self.x1
+        self.y = self.y1
         self.visible = True
         self.sound.play()
 

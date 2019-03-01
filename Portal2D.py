@@ -1,9 +1,10 @@
+import pygame, os
+
 import Helper
 from Human import Human
 from Bullet import Bullet
 from Field import Field
-import pygame, os
-
+from Hand import Hand
 from Label import Label
 from Menu import Menu
 from Portal import Portal
@@ -57,8 +58,7 @@ def load_level(level):
     # загружаем поле
     field.load(level)
     # человека ставим где вход
-    human.rect.x = field.enter.rect.x
-    human.rect.y = field.enter.rect.y
+    human.set_pos(field.enter.rect.x, field.enter.rect.y)
     # убираем порталы и пулю
     red_portal.visible = False
     blue_portal.visible = False
@@ -71,7 +71,7 @@ def load_level(level):
     # переключаемся в игровое меню
     menu.start = False
     # сперва стреляем красной пулей
-    bullet.red = True
+    human.hand.red = True
     # в заголовке окна показываем номер уровня
     pygame.display.set_caption('Portal 2D - уровень ' + str(level))
 
@@ -87,7 +87,7 @@ def save_game():
         f.write(str(field.level) + "\n")
         f.write(str(human.rect.x) + "\n")
         f.write(str(human.rect.y) + "\n")
-        f.write(str(bullet.red) + "\n")
+        f.write(str(human.hand.red) + "\n")
 
         red_portal.save(f)
         blue_portal.save(f)
@@ -116,9 +116,8 @@ def load_game():
     level = int(lines[0])
     load_level(level)
 
-    human.rect.x = int(lines[1])
-    human.rect.y = int(lines[2])
-    bullet.red = lines[3] == "True"
+    human.set_pos(int(lines[1]), int(lines[2]))
+    human.hand.red = lines[3] == "True"
 
     red_portal.load(lines, 4)
     if red_portal.visible:
@@ -156,7 +155,7 @@ def open_portal(block):
     cx = bullet.rect.x + bullet.rect.w / 2
     cy = bullet.rect.y + bullet.rect.h / 2
 
-    if bullet.red:
+    if human.hand.red:
         portal = red_portal
     else:
         portal = blue_portal
@@ -180,13 +179,13 @@ def open_portal(block):
         return
 
     # меняем цвет следующей пули
-    if bullet.red:
-        bullet.red = False
+    if human.hand.red:
+        human.hand.red = False
     else:
-        bullet.red = True
+        human.hand.red = True
 
 
-# перемещение пули
+    # перемещение пули
 def move_bullet():
     # двигаем по 1 пикселю
     for i in range(15):
@@ -213,10 +212,10 @@ def move_bullet():
 def try_down():
     for i in range(int(human.acceleration)):
         # опускаем по 1 пикселю
-        human.rect.y += 1
+        human.move(0, 1)
         if Helper.mask_collide_sprites(human, field.blocks):
             # если там блок, то возвращаем обратно
-            human.rect.y -= 1
+            human.move(0, -1)
             human.acceleration = 2
             break
         else:
@@ -248,10 +247,11 @@ while running:
                 click_menu()
             # если на экране нет пули, то стреляем
             elif not bullet.visible:
-                x1 = human.rect.x + human.rect.w / 2
-                y1 = human.rect.y + human.rect.h / 2
+                x1 = human.rect.x + Hand.SHOULDER_X
+                y1 = human.rect.y + Hand.SHOULDER_Y
                 x2 = event.pos[0]
                 y2 = event.pos[1]
+                bullet.red = human.hand.red
                 bullet.start(x1, y1, x2, y2)
         # если на экране надпись и нажали пробел, то убираем надпись
         if label.visible and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
@@ -260,8 +260,9 @@ while running:
         if not menu.visible and not label.visible and event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             menu.visible = True
         # перемещение мышки в меню - раскрашиваем кнопки
-        if menu.visible and event.type == pygame.MOUSEMOTION:
+        if event.type == pygame.MOUSEMOTION:
             menu.set_mouse(event.pos[0], event.pos[1])
+            human.set_mouse(event.pos[0], event.pos[1])
 
     # рисуем надпись на экране
     if label.visible:
@@ -301,7 +302,7 @@ while running:
 
     # если вошел в стену, то возвращаем человека обратно
     if Helper.mask_collide_sprites(human, field.blocks):
-        human.rect.x = x
+        human.set_pos(x, human.rect.y)
 
     # пропуем опустить человека вниз
     try_down()

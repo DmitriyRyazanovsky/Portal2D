@@ -49,10 +49,12 @@ class Field:
         self.enters.remove(self.enters)
         self.backs.remove(self.backs)
 
+        # загружаем строки из файла
         with open('data/Level' + str(level) + '.txt') as f:
             for line in f.readlines():
                 self.lines.append(line.strip())
 
+        # загружаем блоки
         for i in range(len(self.lines)):
             for j in range(len(self.lines[i])):
                 x, y = 64 * j, 84 * i
@@ -150,6 +152,7 @@ class Field:
                     block.down = False
                     self.blocks.add(block)
 
+        # задаем маску каждому блоку для ускорения
         for block in self.blocks:
             block.mask = self.block_mask
 
