@@ -1,10 +1,10 @@
-AQQQQQQQQQQQQQQQQQD
-R 0               H
-IQQQQQQD      X   R
-R      MD     X   R
-R       ISH XXX   R
-R       MOP XXXX  R
-I                 R
-R 1          X    R
-IQQQL        V    R
-N            XXXL N
+SOOOOOOOOOOOOOOOOOS
+H 0               S
+SBBBBBBD      S   I
+S      SD     S   I
+S       SSS SSS   I
+S       OOO OOOL  I
+S                 I
+S 1          S    I
+SQQQL        S    I
+S            SBBD I

@@ -163,20 +163,19 @@ def open_portal(block):
 
     # вычисляем с какой стороны портал
     if block.rect.x <= cx <= block.rect.x + block.rect.w:
-        if cy < block.rect.y:
-            if block.up == 1:
-                portal.top(block.rect)
-
+        if cy < block.rect.y and block.up:
+            portal.top(block.rect)
+        elif cy > block.rect.y and block.down:
+            portal.bottom(block.rect)
         else:
-            if block.down == 1:
-                portal.bottom(block.rect)
+            return
     elif block.rect.y <= cy <= block.rect.y + block.rect.h:
-        if cx < block.rect.x:
-            if block.left == 1:
-                portal.left(block.rect)
+        if cx < block.rect.x and block.left:
+            portal.left(block.rect)
+        elif cx > block.rect.x and block.right:
+            portal.right(block.rect)
         else:
-            if block.right == 1:
-                portal.right(block.rect)
+            return
     else:
         return
 
