@@ -191,17 +191,17 @@ def move_bullet():
     for i in range(15):
         bullet.move()
         # если пуля попала в красный портал
-        if red_portal.visible and pygame.sprite.spritecollideany(bullet, red_portal.group):
+        if red_portal.visible and pygame.sprite.collide_mask(bullet, red_portal):
             bullet.visible = False
             break
 
         # если пуля попала в синий потал
-        if blue_portal.visible and pygame.sprite.spritecollideany(bullet, blue_portal.group):
+        if blue_portal.visible and pygame.sprite.collide_mask(bullet, blue_portal):
             bullet.visible = False
             break
 
         # если пуля попала в блок
-        block = pygame.sprite.spritecollideany(bullet, field.blocks)
+        block = Helper.mask_collide_sprites(bullet, field.blocks)
         if block:
             bullet.visible = False
             open_portal(block)

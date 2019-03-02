@@ -22,6 +22,9 @@ class Bullet(pygame.sprite.Sprite):
         # звук выстрела
         self.sound = pygame.mixer.Sound('data/purr.wav')
 
+        # маска для подсчета столкновений
+        self.mask = pygame.mask.from_surface(self.image)
+
     # запуск пули
     def start(self, x1, y1, x2, y2):
         if self.red:

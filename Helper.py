@@ -30,5 +30,5 @@ def get_frames(image, columns):
 def mask_collide_sprites(mask, sprites):
     for sprite in sprites:
         if pygame.sprite.collide_mask(mask, sprite):
-            return True
+            return sprite
     return False

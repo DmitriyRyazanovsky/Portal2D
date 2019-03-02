@@ -36,6 +36,9 @@ class Portal(pygame.sprite.Sprite):
         self.visible = True
         self.orientation = Portal.TOP
 
+        # маска для подсчета столкновений
+        self.mask = pygame.mask.from_surface(self.image)
+
     # открываем портал снизу
     def bottom(self, rect):
         self.image = self.horz_image
@@ -44,6 +47,9 @@ class Portal(pygame.sprite.Sprite):
         self.rect.y = rect.y + rect.h - self.rect.h // 2
         self.visible = True
         self.orientation = Portal.BOTTOM
+
+        # маска для подсчета столкновений
+        self.mask = pygame.mask.from_surface(self.image)
 
     # открываем портал слева
     def left(self, rect):
@@ -54,6 +60,9 @@ class Portal(pygame.sprite.Sprite):
         self.visible = True
         self.orientation = Portal.LEFT
 
+        # маска для подсчета столкновений
+        self.mask = pygame.mask.from_surface(self.image)
+
     # открываем портал справа
     def right(self, rect):
         self.image = self.vert_image
@@ -62,6 +71,9 @@ class Portal(pygame.sprite.Sprite):
         self.rect.y = rect.y
         self.visible = True
         self.orientation = Portal.RIGHT
+
+        # маска для подсчета столкновений
+        self.mask = pygame.mask.from_surface(self.image)
 
     # телепортируем человека
     def teleport(self, human):
