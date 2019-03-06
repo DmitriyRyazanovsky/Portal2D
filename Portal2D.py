@@ -185,7 +185,7 @@ def open_portal(block):
         human.hand.red = True
 
 
-    # перемещение пули
+# перемещение пули
 def move_bullet():
     # двигаем по 1 пикселю
     for i in range(15):
